@@ -1,0 +1,12 @@
+name: Test Workflow
+
+on:
+  schedule:
+    - cron: '*/1 * * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo test
+        run: echo "Test workflow running"
