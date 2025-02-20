@@ -2,7 +2,7 @@ name: Gmail Classifier
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '40 0 * * *' # Avoiding busy load times
 
 jobs:
   build:
