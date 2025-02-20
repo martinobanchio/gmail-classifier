@@ -8,8 +8,47 @@ import os.path
 import base64
 from datetime import datetime, timedelta
 
+### Credential Management
+
+def get_credentials_from_secrets():
+    """Retrieves Google credentials from GitHub Secrets."""
+    encoded_creds = os.environ.get("GOOGLE_CREDENTIALS")
+    if not encoded_creds:
+        raise ValueError("GOOGLE_CREDENTIALS secret not found.")
+
+    try:
+        decoded_creds = base64.b64decode(encoded_creds)
+        creds = pickle.loads(decoded_creds)
+        return creds
+    except Exception as e:
+        print(f"Error decoding or unpickling credentials: {e}")
+        return None
+
+def refresh_or_generate_credentials():
+    """Refreshes or generates Google credentials."""
+    creds = get_credentials_from_secrets()
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            try:
+                creds.refresh(Request())
+                return creds
+            except Exception as refresh_error:
+                print(f"Error refreshing credentials: {refresh_error}")
+                return None
+        else:
+            try:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+                return creds
+            except Exception as flow_error:
+                print(f"Error generating new credentials: {flow_error}")
+                return None
+    return creds
 
 ### Gemini API Utils
+
 def email_processing(input):
   model = genai.GenerativeModel("gemini-2.0-flash")
   prompt = """Extract from the attached email some information. I want to know:
@@ -36,7 +75,8 @@ def json_output(input):
   return json.loads(input.text.replace("\n", "").replace("```", "").replace("json", ""))
 
 
-## Gmail API Utils
+### Gmail API Utils
+
 def mark_as_read(service, message_id):
     """Marks a message as read."""
     try:
