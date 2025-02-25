@@ -56,11 +56,12 @@ def email_processing(input):
   - what gallery sent the email
   - where the show or fair will be. if no show or fair, just leave blank
   - if it is a show or a fair, the time
+  - if it is a show or a fair, the day
   - if it is a show or a fair, the title of the exhibition.
 
   Use this JSON schema:
 
-  Show = {'sender_email': str, 'is_show_or_fair': str; 'city': str, 'gallery': str, 'show_title': str, 'opening_time': str}
+  Show = {'sender_email': str, 'is_show_or_fair': str; 'city': str, 'gallery': str, 'show_title': str, 'opening day': str, 'opening_time': str}
 
   Please return only the JSON with the proper formatting and nothing else. It has to be ready to be fed to the json.loads command in python.
   NEVER return an empty JSON. The JSON should always have the fields above, even if they are empty. The first and second fields should never be empty.
